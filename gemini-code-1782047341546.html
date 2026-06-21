@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>نظام تقييم الأداء المتكامل</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; padding: 20px; }
+        .dashboard { max-width: 800px; background: white; margin: auto; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 10px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; }
+        .btn-email { background: #27ae60; }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <h2>تقرير تقييم الأداء الشهري</h2>
+    <table id="infoTable">
+        <tr>
+            <td><strong>اسم الموظف:</strong> <select id="empSelect" onchange="fillEmpData()"><option value="">اختر...</option></select></td>
+            <td><strong>الإدارة:</strong> <input type="text" id="dept" readonly></td>
+        </tr>
+    </table>
+    <table id="evalTable"></table>
+    <strong>ملاحظات المدير:</strong><textarea id="feedback" rows="2"></textarea>
+    <div class="btn-group" style="margin-top:20px;">
+        <button class="btn-email" onclick="sendReport()">إرسال التقرير للموظف</button>
+    </div>
+</div>
+
+<script>
+    (function(){ emailjs.init("tiXRZ3Ldls1VHF5KH"); })();
+    const employees = [{ name: "احمد سمير السيد", dept: "رئيس قسم نظم المعلومات", email: "it@socialtakafol.org" }]; // أضف باقي الموظفين هنا
+    const empSelect = document.getElementById('empSelect');
+    employees.forEach((emp, i) => empSelect.innerHTML += `<option value="${i}">${emp.name}</option>`);
+
+    function fillEmpData() {
+        const i = empSelect.value;
+        if(i !== "") { document.getElementById('dept').value = employees[i].dept; }
+    }
+
+    async function sendReport() {
+        const i = empSelect.value;
+        // ضع هنا الرابط المباشر لصفحة reply.html الخاصة بك على GitHub Pages
+        const replyUrl = "https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/reply.html";
+        
+        const params = {
+            name: employees[i].name,
+            email: employees[i].email,
+            reply_link: `${replyUrl}?name=${encodeURIComponent(employees[i].name)}`,
+            feedback: document.getElementById('feedback').value
+        };
+        await emailjs.send("service_49n98a5", "template_qvksige", params);
+        alert("تم الإرسال!");
+    }
+</script>
+</body>
+</html>
